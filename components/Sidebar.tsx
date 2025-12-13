@@ -6,6 +6,19 @@ interface SidebarProps {
   toggleCategory: (category: Category) => void;
 }
 
+const CATEGORY_EMOJIS: Record<Category, string> = {
+  [Category.Finance]: "💸",
+  [Category.Romance]: "💘",
+  [Category.Health]: "🧘",
+  [Category.Social]: "🥂",
+  [Category.Work]: "💼",
+  [Category.SelfCare]: "🛁",
+  [Category.Family]: "🏡",
+  [Category.DailyHabits]: "🗓️",
+  [Category.Friends]: "👯",
+  [Category.DigitalLife]: "📱",
+};
+
 const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory }) => {
   const categories = Object.values(Category);
 
@@ -32,13 +45,14 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory })
               key={category}
               onClick={() => toggleCategory(category)}
               className={`
-                px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 border text-center whitespace-nowrap flex-shrink-0
+                px-3 py-3 rounded-lg text-sm font-bold transition-all duration-200 border text-center whitespace-nowrap flex-shrink-0 flex items-center justify-center gap-1.5
                 ${isSelected 
                   ? 'bg-stone-800 text-white border-stone-800 shadow-md' 
                   : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 hover:text-stone-900'}
               `}
             >
-              {category}
+              <span className="text-base leading-none select-none">{CATEGORY_EMOJIS[category]}</span>
+              <span>{category}</span>
             </button>
           );
         })}

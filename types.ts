@@ -1,5 +1,5 @@
 export enum Category {
-  Money = 'Money',
+  Finance = 'Finance',
   Romance = 'Romance',
   Health = 'Health',
   Social = 'Social',

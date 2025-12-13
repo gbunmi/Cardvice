@@ -55,7 +55,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative translate-y-10 md:translate-y-24">
+    <div className="flex flex-col items-center justify-end w-full max-w-4xl mx-auto relative">
       <style>{`
         @keyframes throw-out {
           0% { transform: translateX(0) rotate(0); opacity: 1; }
@@ -74,35 +74,35 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
         }
       `}</style>
 
-      {/* The Image Card Container */}
+      {/* The Image Card Container - Uses flex to center content and constraints */}
       <div 
-        className={`relative w-full ${getMainCardClasses()}`}
+        className={`relative flex justify-center ${getMainCardClasses()}`}
         onAnimationEnd={handleAnimationEnd}
       >
-        {/* The Image Asset */}
-        <img 
-          src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
-          alt="Hands holding an advice card"
-          className="w-full h-auto select-none"
-          draggable={false}
-        />
-        
-        {/* Content Overlay - Made clickable for interaction without button */}
-        {/* Padding bottom ensures advice text is optically centered on the 'paper' part */}
-        <div 
-          onClick={onNext}
-          className="absolute inset-0 flex flex-col items-center justify-center px-16 pb-20 md:px-24 md:pb-48 text-center cursor-pointer group"
-        >
-          
-          <p className="text-xl md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-xl">
-            {displayAdvice}
-          </p>
+        <div className="relative">
+            {/* The Image Asset - Constrained by height to fit viewport */}
+            <img 
+              src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
+              alt="Hands holding an advice card"
+              className="w-auto h-auto max-w-full max-h-[60dvh] md:max-h-[85dvh] select-none object-contain block"
+              draggable={false}
+            />
+            
+            {/* Content Overlay */}
+            <div 
+              onClick={onNext}
+              className="absolute inset-0 flex flex-col items-center justify-center px-10 pb-12 md:px-24 md:pb-48 text-center cursor-pointer group"
+            >
+              
+              <p className="text-lg md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-[80%] md:max-w-xl">
+                {displayAdvice}
+              </p>
 
-          {/* Instruction text positioned at the bottom of the paper area */}
-          <p className="hidden md:block absolute bottom-16 md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
-            press spacebar to shuffle
-          </p>
-
+              {/* Instruction text positioned at the bottom of the paper area */}
+              <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
+                press spacebar to shuffle
+              </p>
+            </div>
         </div>
       </div>
     </div>

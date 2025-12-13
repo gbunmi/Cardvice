@@ -86,15 +86,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden flex flex-col md:block">
+    <div className="fixed inset-0 w-full h-[100dvh] bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden flex flex-col md:block">
       <Sidebar 
         selectedCategories={selectedCategories} 
         toggleCategory={toggleCategory} 
       />
       
-      {/* Updated background to align bottom with 100% width to leave space at top */}
+      {/* Updated background to align bottom with 100% width to leave space at top. Use 100dvh for height. */}
       <main 
-        className="flex-1 w-full md:w-auto md:ml-80 md:h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom"
+        className="flex-1 w-full md:w-auto md:ml-80 md:h-[100dvh] flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom"
         style={{
           backgroundImage: `url('https://raw.githubusercontent.com/gbunmi/images/main/cardvice%20BG%203.png')`,
           backgroundSize: '100% auto'

@@ -10,7 +10,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory })
   const categories = Object.values(Category);
 
   return (
-    <div className="w-full md:w-80 md:h-screen md:fixed md:left-0 md:top-0 bg-[#FAFAF9] px-4 py-6 md:px-5 md:py-10 flex flex-col flex-shrink-0 md:border-r border-stone-200 z-10">
+    <div className="w-full md:w-80 md:h-[100dvh] md:fixed md:left-0 md:top-0 bg-[#FAFAF9] px-4 py-6 md:px-5 md:py-10 flex flex-col flex-shrink-0 md:border-r border-stone-200 z-10">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;

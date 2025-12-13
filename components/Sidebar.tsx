@@ -15,7 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory })
         <h1 className="text-3xl font-bold text-stone-900 font-serif tracking-tight">Cardvice.</h1>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {categories.map((category) => {
           const isSelected = selectedCategories.includes(category);
           return (
@@ -37,7 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory })
       
       <div className="mt-auto hidden md:block pt-10">
         <p className="text-xs text-stone-400">
-          Press Spacebar to shuffle.
           <br/>
           &copy; {new Date().getFullYear()} Cardvice.
         </p>

@@ -3,14 +3,16 @@ import React, { useEffect, useState, useRef } from 'react';
 interface CardDisplayProps {
   advice: string;
   onNext: () => void;
+  trigger: number;
 }
 
 type AnimationState = 'idle' | 'leaving' | 'entering';
 
-const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext }) => {
+const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) => {
   const [animationState, setAnimationState] = useState<AnimationState>('idle');
   const [displayAdvice, setDisplayAdvice] = useState(advice);
   const isFirstRender = useRef(true);
+  const prevTrigger = useRef(trigger);
 
   useEffect(() => {
     // Skip animation on initial mount
@@ -19,11 +21,13 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext }) => {
       return;
     }
     
-    // When advice prop changes, start the exit animation sequence
-    if (advice !== displayAdvice) {
+    // Check if trigger has changed (indicating a user request for new card)
+    if (trigger !== prevTrigger.current) {
+      prevTrigger.current = trigger;
+      // Start animation regardless of whether advice text changed
       setAnimationState('leaving');
     }
-  }, [advice, displayAdvice]);
+  }, [trigger, advice]); // We depend on trigger primarily for the action
 
   const handleAnimationEnd = () => {
     if (animationState === 'leaving') {
@@ -50,22 +54,8 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext }) => {
     }
   };
 
-  // Background cards animation: When leaving, they move UP to fill the gap.
-  // When entering (or idle), they are at their pushed-down positions.
-  const getMiddleCardClasses = () => {
-    return animationState === 'leaving' 
-      ? 'translate-y-0 scale-100 opacity-100 transition-all duration-300 ease-out' // Moves up to top position
-      : 'scale-[0.96] -translate-y-3 opacity-80 transition-all duration-500 ease-out'; // Default/Reset position
-  };
-
-  const getDeepestCardClasses = () => {
-    return animationState === 'leaving'
-      ? 'translate-y-[-12px] scale-[0.96] opacity-80 transition-all duration-300 ease-out' // Moves up to middle position
-      : 'scale-[0.92] -translate-y-6 opacity-60 transition-all duration-500 ease-out'; // Default/Reset position
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] w-full max-w-2xl mx-auto px-4 relative">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative translate-y-6 md:translate-y-10">
       <style>{`
         @keyframes throw-out {
           0% { transform: translateX(0) rotate(0); opacity: 1; }
@@ -84,34 +74,36 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext }) => {
         }
       `}</style>
 
-      {/* The Stack Effect (Background Cards) */}
-      <div className="relative w-full aspect-[4/3] md:aspect-[16/10] max-h-[400px]">
-        {/* Deepest Card */}
-        <div className={`absolute inset-0 bg-white border border-stone-200 rounded-2xl shadow-sm transform ${getDeepestCardClasses()}`}></div>
+      {/* The Image Card Container */}
+      <div 
+        className={`relative w-full ${getMainCardClasses()}`}
+        onAnimationEnd={handleAnimationEnd}
+      >
+        {/* The Image Asset */}
+        <img 
+          src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
+          alt="Hands holding an advice card"
+          className="w-full h-auto select-none"
+          draggable={false}
+        />
         
-        {/* Middle Card */}
-        <div className={`absolute inset-0 bg-white border border-stone-200 rounded-2xl shadow-sm transform ${getMiddleCardClasses()}`}></div>
-        
-        {/* Main Card */}
+        {/* Content Overlay - Made clickable for interaction without button */}
+        {/* Padding bottom ensures advice text is optically centered on the 'paper' part */}
         <div 
-          className={`absolute inset-0 bg-white border border-stone-200 rounded-2xl shadow-xl flex items-center justify-center p-8 md:p-16 transform z-10 ${getMainCardClasses()}`}
-          onAnimationEnd={handleAnimationEnd}
+          onClick={onNext}
+          className="absolute inset-0 flex flex-col items-center justify-center px-16 pb-20 md:px-24 md:pb-48 text-center cursor-pointer group"
         >
-          <p className="text-xl md:text-3xl text-stone-800 font-serif leading-relaxed text-center select-none">
+          
+          <p className="text-xl md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-xl">
             {displayAdvice}
           </p>
-        </div>
-      </div>
 
-      {/* Action Button */}
-      <div className="mt-12 md:mt-16 w-full max-w-lg">
-        <button
-          onClick={onNext}
-          disabled={animationState !== 'idle'}
-          className="w-full bg-[#1c1c1c] text-stone-100 hover:bg-black active:scale-[0.98] transition-all duration-200 py-4 px-8 rounded-lg text-sm md:text-base font-medium shadow-lg tracking-wide disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          Press the spacebar to see a new card
-        </button>
+          {/* Instruction text positioned at the bottom of the paper area */}
+          <p className="absolute bottom-16 md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
+            press spacebar to shuffle
+          </p>
+
+        </div>
       </div>
     </div>
   );

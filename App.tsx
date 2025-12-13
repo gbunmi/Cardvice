@@ -7,6 +7,7 @@ import { ADVICE_DATABASE, ALL_ADVICE } from './constants';
 const App: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [currentAdvice, setCurrentAdvice] = useState<string>("");
+  const [trigger, setTrigger] = useState(0);
 
   // Logic to get a random advice based on filters
   const getRandomAdvice = useCallback(() => {
@@ -23,40 +24,56 @@ const App: React.FC = () => {
     }
 
     if (pool.length === 0) return "No advice available for this category.";
+    
+    // If there's only one option, we can't switch.
+    if (pool.length === 1) return pool[0];
 
-    // Ensure we don't pick the exact same one if possible (unless pool is size 1)
-    let newAdvice = pool[Math.floor(Math.random() * pool.length)];
-    if (pool.length > 1 && newAdvice === currentAdvice) {
-      // Try one more time to avoid immediate duplicate
+    // Try to find a different advice from current
+    let newAdvice = currentAdvice;
+    let attempts = 0;
+    while (newAdvice === currentAdvice && attempts < 10) {
       newAdvice = pool[Math.floor(Math.random() * pool.length)];
+      attempts++;
     }
     
     return newAdvice;
   }, [selectedCategories, currentAdvice]);
 
+  // Handle generating next advice
+  const handleNext = useCallback(() => {
+    const nextAdvice = getRandomAdvice();
+    setCurrentAdvice(nextAdvice);
+    setTrigger(t => t + 1); // Always increment trigger to force animation
+  }, [getRandomAdvice]);
+
   // Initial load
   useEffect(() => {
     setCurrentAdvice(getRandomAdvice());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount
+  }, []); 
 
-  // When categories change, update the advice immediately to match context
+  // When categories change, update the advice immediately
   useEffect(() => {
-    setCurrentAdvice(getRandomAdvice());
-  }, [selectedCategories, getRandomAdvice]);
+    // When changing filters, we want to update the card.
+    const nextAdvice = getRandomAdvice();
+    if (nextAdvice !== currentAdvice) {
+        setCurrentAdvice(nextAdvice);
+        setTrigger(t => t + 1);
+    }
+  }, [selectedCategories]); 
 
   // Handle Spacebar
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'Space') {
         event.preventDefault(); // Prevent scrolling
-        setCurrentAdvice(getRandomAdvice());
+        handleNext();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getRandomAdvice]);
+  }, [handleNext]);
 
   const toggleCategory = (category: Category) => {
     setSelectedCategories(prev => {
@@ -69,16 +86,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200">
+    <div className="min-h-screen bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden">
       <Sidebar 
         selectedCategories={selectedCategories} 
         toggleCategory={toggleCategory} 
       />
       
-      <main className="md:ml-80 min-h-screen flex items-center justify-center p-6 md:p-12 transition-all duration-300">
+      {/* Updated alignment: items-end for bottom alignment, pb-0 to touch bottom */}
+      <main className="md:ml-80 h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300">
         <CardDisplay 
           advice={currentAdvice} 
-          onNext={() => setCurrentAdvice(getRandomAdvice())} 
+          trigger={trigger}
+          onNext={handleNext} 
         />
       </main>
     </div>

@@ -99,7 +99,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
           </p>
 
           {/* Instruction text positioned at the bottom of the paper area */}
-          <p className="absolute bottom-16 md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
+          <p className="hidden md:block absolute bottom-16 md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
             press spacebar to shuffle
           </p>
 

@@ -86,14 +86,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden">
+    <div className="fixed inset-0 w-full h-full bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden flex flex-col md:block">
       <Sidebar 
         selectedCategories={selectedCategories} 
         toggleCategory={toggleCategory} 
       />
       
-      {/* Updated alignment: items-end for bottom alignment, pb-0 to touch bottom */}
-      <main className="md:ml-80 h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300">
+      {/* Updated alignment: flex-1 for mobile fill, md:ml-80 for desktop offset */}
+      <main className="flex-1 w-full md:ml-80 md:h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300">
         <CardDisplay 
           advice={currentAdvice} 
           trigger={trigger}

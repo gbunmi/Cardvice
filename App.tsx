@@ -92,8 +92,14 @@ const App: React.FC = () => {
         toggleCategory={toggleCategory} 
       />
       
-      {/* Updated alignment: flex-1 for mobile fill, md:ml-80 for desktop offset */}
-      <main className="flex-1 w-full md:ml-80 md:h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300">
+      {/* Updated background to align bottom with 100% width to leave space at top */}
+      <main 
+        className="flex-1 w-full md:w-auto md:ml-80 md:h-screen flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom"
+        style={{
+          backgroundImage: `url('https://raw.githubusercontent.com/gbunmi/images/main/cardvice%20BG%203.png')`,
+          backgroundSize: '100% auto'
+        }}
+      >
         <CardDisplay 
           advice={currentAdvice} 
           trigger={trigger}

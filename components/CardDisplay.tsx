@@ -55,7 +55,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative translate-y-6 md:translate-y-10">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative translate-y-10 md:translate-y-24">
       <style>{`
         @keyframes throw-out {
           0% { transform: translateX(0) rotate(0); opacity: 1; }

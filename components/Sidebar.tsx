@@ -8,7 +8,7 @@ interface SidebarProps {
 
 const CATEGORY_EMOJIS: Record<Category, string> = {
   [Category.Finance]: "💸",
-  [Category.Romance]: "💘",
+  [Category.Love]: "💘",
   [Category.Health]: "🧘",
   [Category.Social]: "🥂",
   [Category.Work]: "💼",

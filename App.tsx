@@ -92,12 +92,11 @@ const App: React.FC = () => {
         toggleCategory={toggleCategory} 
       />
       
-      {/* Updated background to align bottom with 100% width to leave space at top. Use 100dvh for height. */}
+      {/* Updated background to align bottom with bg-cover to fill screen properly on mobile */}
       <main 
-        className="flex-1 w-full md:w-auto md:ml-80 md:h-[100dvh] flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom"
+        className="flex-1 w-full md:w-auto md:ml-80 md:h-[100dvh] flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom bg-cover"
         style={{
-          backgroundImage: `url('https://raw.githubusercontent.com/gbunmi/images/main/cardvice%20BG%204%20(1).png')`,
-          backgroundSize: '100% auto'
+          backgroundImage: `url('https://raw.githubusercontent.com/gbunmi/images/main/cardvice%20BG%204%20(1).png')`
         }}
       >
         <CardDisplay 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Category } from '../types';
 
 interface SidebarProps {
-  selectedCategories: Category[];
+  selectedCategory: Category | null;
   toggleCategory: (category: Category) => void;
 }
 
@@ -19,7 +19,7 @@ const CATEGORY_EMOJI_CODES: Record<Category, string> = {
   [Category.DigitalLife]: "1f4f1",
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory }) => {
+const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) => {
   const categories = Object.values(Category);
 
   return (
@@ -28,34 +28,28 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategories, toggleCategory })
         <h1 className="text-3xl font-bold text-stone-900 font-serif tracking-tight">Cardvice.</h1>
       </div>
 
-      <div className="grid grid-cols-12 gap-1.5 pb-2 md:grid-cols-2 md:gap-2 md:pb-0">
-        {categories.map((category, index) => {
-          const isSelected = selectedCategories.includes(category);
+      <div className="grid grid-rows-2 grid-flow-col gap-2 overflow-x-auto pb-4 md:pb-0 md:grid-cols-2 md:grid-rows-none md:grid-flow-row md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
+        {categories.map((category) => {
+          const isSelected = selectedCategory === category;
           const emojiUrl = `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[category]}.png`;
           
-          // Mobile Layout Logic (12 column grid):
-          // Rows 1: 4 items (Index 0-3) -> span 3 cols each (12/3 = 4 items)
-          // Rows 2: 3 items (Index 4-6) -> span 4 cols each (12/4 = 3 items)
-          // Rows 3: 3 items (Index 7-9) -> span 4 cols each (12/4 = 3 items)
-          const colSpanClass = index < 4 ? 'col-span-3' : 'col-span-4';
-
           return (
             <button
               key={category}
               onClick={() => toggleCategory(category)}
               className={`
-                ${colSpanClass} md:col-span-1
-                px-1 py-2 md:px-3 md:py-3 
-                rounded-lg text-[10px] sm:text-xs md:text-sm font-bold 
+                min-w-max md:min-w-0
+                px-4 py-2 md:px-3 md:py-3 
+                rounded-lg text-xs md:text-sm font-bold 
                 transition-all duration-200 border text-center whitespace-nowrap 
-                flex-shrink-0 flex items-center justify-center gap-1 md:gap-2
+                flex-shrink-0 flex items-center justify-center gap-2
                 ${isSelected 
                   ? 'bg-stone-800 text-white border-stone-800 shadow-md' 
                   : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 hover:text-stone-900'}
               `}
             >
               <img src={emojiUrl} alt="" className="w-4 h-4 md:w-5 md:h-5 object-contain select-none pointer-events-none" draggable={false} />
-              <span className="truncate">{category}</span>
+              <span>{category}</span>
             </button>
           );
         })}

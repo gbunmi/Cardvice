@@ -5,22 +5,18 @@ import { Category } from './types';
 import { ADVICE_DATABASE, ALL_ADVICE } from './constants';
 
 const App: React.FC = () => {
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [currentAdvice, setCurrentAdvice] = useState<string>("");
   const [trigger, setTrigger] = useState(0);
 
-  // Logic to get a random advice based on filters
+  // Logic to get a random advice based on the single filter
   const getRandomAdvice = useCallback(() => {
     let pool: string[] = [];
 
-    if (selectedCategories.length === 0) {
+    if (!selectedCategory) {
       pool = ALL_ADVICE;
     } else {
-      selectedCategories.forEach(cat => {
-        if (ADVICE_DATABASE[cat]) {
-          pool = [...pool, ...ADVICE_DATABASE[cat]];
-        }
-      });
+      pool = ADVICE_DATABASE[selectedCategory] || [];
     }
 
     if (pool.length === 0) return "No advice available for this category.";
@@ -37,7 +33,7 @@ const App: React.FC = () => {
     }
     
     return newAdvice;
-  }, [selectedCategories, currentAdvice]);
+  }, [selectedCategory, currentAdvice]);
 
   // Handle generating next advice
   const handleNext = useCallback(() => {
@@ -52,15 +48,14 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  // When categories change, update the advice immediately
+  // When category changes, update the advice immediately
   useEffect(() => {
-    // When changing filters, we want to update the card.
     const nextAdvice = getRandomAdvice();
     if (nextAdvice !== currentAdvice) {
         setCurrentAdvice(nextAdvice);
         setTrigger(t => t + 1);
     }
-  }, [selectedCategories]); 
+  }, [selectedCategory]); 
 
   // Handle Spacebar
   useEffect(() => {
@@ -76,23 +71,16 @@ const App: React.FC = () => {
   }, [handleNext]);
 
   const toggleCategory = (category: Category) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(category)) {
-        return prev.filter(c => c !== category);
-      } else {
-        return [...prev, category];
-      }
-    });
+    setSelectedCategory(prev => prev === category ? null : category);
   };
 
   return (
     <div className="fixed inset-0 w-full h-[100dvh] bg-[#FAFAF9] text-stone-900 font-sans selection:bg-stone-200 overflow-hidden flex flex-col md:block">
       <Sidebar 
-        selectedCategories={selectedCategories} 
+        selectedCategory={selectedCategory} 
         toggleCategory={toggleCategory} 
       />
       
-      {/* Updated background to align bottom with bg-cover to fill screen properly on mobile */}
       <main 
         className="flex-1 w-full md:w-auto md:ml-80 md:h-[100dvh] flex items-end justify-center pb-0 px-4 md:px-0 transition-all duration-300 bg-no-repeat bg-bottom bg-cover"
         style={{

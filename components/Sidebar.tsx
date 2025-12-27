@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) =
         <h1 className="text-3xl font-bold text-stone-900 font-serif tracking-tight">Cardvice.</h1>
       </div>
 
-      <div className="grid grid-rows-2 grid-flow-col gap-2 overflow-x-auto pb-4 md:pb-0 md:grid-cols-2 md:grid-rows-none md:grid-flow-row md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
+      <div className="grid grid-rows-2 grid-flow-col gap-3 md:gap-2 overflow-x-auto pb-4 md:pb-0 md:grid-cols-2 md:grid-rows-none md:grid-flow-row md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
         {categories.map((category) => {
           const isSelected = selectedCategory === category;
           const emojiUrl = `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[category]}.png`;
@@ -27,16 +27,16 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) =
               onClick={() => toggleCategory(category)}
               className={`
                 min-w-max md:min-w-0
-                px-4 py-2 md:px-3 md:py-3 
-                rounded-lg text-xs md:text-sm font-bold 
+                px-5 py-3 md:px-3 md:py-3 
+                rounded-xl md:rounded-lg text-sm md:text-sm font-bold 
                 transition-all duration-200 border text-center whitespace-nowrap 
-                flex-shrink-0 flex items-center justify-center gap-2
+                flex-shrink-0 flex items-center justify-center gap-3 md:gap-2
                 ${isSelected 
                   ? 'bg-stone-800 text-white border-stone-800 shadow-md' 
                   : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 hover:text-stone-900'}
               `}
             >
-              <img src={emojiUrl} alt="" className="w-4 h-4 md:w-5 md:h-5 object-contain select-none pointer-events-none" draggable={false} />
+              <img src={emojiUrl} alt="" className="w-5 h-5 md:w-5 md:h-5 object-contain select-none pointer-events-none" draggable={false} />
               <span>{category}</span>
             </button>
           );

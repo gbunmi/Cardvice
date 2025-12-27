@@ -6,6 +6,7 @@
     <title>Cardvice</title>
     <link rel="icon" href="https://i.ibb.co/ycGTn6qC/Frame-18.png" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -24,6 +25,13 @@
       body {
         font-family: 'Libre Baskerville', serif;
         background-color: #FAFAF9; /* stone-50 */
+      }
+      
+      /* Hide capture area from view but keep it in DOM for html2canvas */
+      #capture-area {
+        position: fixed;
+        left: -9999px;
+        top: 0;
       }
     </style>
   <script type="importmap">

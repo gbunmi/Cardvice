@@ -15,8 +15,10 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
   const [animationState, setAnimationState] = useState<AnimationState>('idle');
   const [displayAdvice, setDisplayAdvice] = useState(advice);
   const [displayCategory, setDisplayCategory] = useState(category);
+  const [isCapturing, setIsCapturing] = useState(false);
   const isFirstRender = useRef(true);
   const prevTrigger = useRef(trigger);
+  const captureRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -51,10 +53,43 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
     }
   };
 
+  const handleCapture = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isCapturing || !captureRef.current) return;
+    
+    setIsCapturing(true);
+    
+    try {
+      // Ensure everything is settled
+      await new Promise(r => setTimeout(r, 600));
+
+      // @ts-ignore
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS: true,
+        allowTaint: false,
+        scale: 2, // High resolution for download
+        backgroundColor: '#FAFAF9',
+        width: 1080,
+        height: 1080,
+        logging: false,
+        imageTimeout: 15000,
+      });
+      
+      const link = document.createElement('a');
+      link.download = `cardvice-${displayCategory.toLowerCase().replace(/\s+/g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+    } catch (err) {
+      console.error('Failed to capture card:', err);
+    } finally {
+      setIsCapturing(false);
+    }
+  };
+
   const emojiUrl = displayCategory ? `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[displayCategory]}.png` : '';
 
   return (
-    <div className="flex flex-col items-center justify-end w-full max-w-4xl mx-auto relative">
+    <div className="flex flex-col items-center justify-end w-full max-w-4xl mx-auto relative h-full">
       <style>{`
         @keyframes throw-out {
           0% { transform: translateX(0) rotate(0); opacity: 1; }
@@ -73,11 +108,118 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
         }
       `}</style>
 
+      {/* 
+        PRECISE 1080x1080 CAPTURE TEMPLATE
+        Matches the provided reference image layout pixel-for-pixel.
+      */}
+      <div id="capture-area">
+        <div 
+          ref={captureRef}
+          style={{ 
+            width: '1080px', 
+            height: '1080px', 
+            backgroundColor: '#FAFAF9', 
+            position: 'relative', 
+            overflow: 'hidden',
+            fontFamily: "'Libre Baskerville', serif",
+            WebkitFontSmoothing: 'antialiased'
+          }}
+        >
+          {/* Layer 1: Background Illustration */}
+          <img 
+            src="https://raw.githubusercontent.com/gbunmi/images/main/cardvice%20BG%204%20(1).png"
+            alt=""
+            crossOrigin="anonymous"
+            style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '1080px', 
+                height: '1080px', 
+                objectFit: 'cover' 
+            }}
+          />
+          
+          {/* Layer 2: Hands + White Card Asset - REDUCED SIZE WITH PADDING */}
+          <img 
+            src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
+            alt=""
+            crossOrigin="anonymous"
+            style={{ 
+                position: 'absolute', 
+                bottom: 0, 
+                left: '40px', // Center with 40px padding on each side (1000px width)
+                width: '1000px', 
+                height: 'auto', 
+                zIndex: 10 
+            }}
+          />
+
+          {/* Layer 3: Content Overlay - Adjusted for 1000px Card width */}
+          <div style={{ position: 'absolute', top: '265px', left: '190px', width: '700px', height: '600px', zIndex: 20 }}>
+             
+             {/* 1. Emoji */}
+             <div style={{ position: 'absolute', top: '140px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+               <img 
+                 src={emojiUrl} 
+                 alt="" 
+                 crossOrigin="anonymous"
+                 style={{ width: '56px', height: '56px', objectFit: 'contain' }}
+               />
+             </div>
+
+             {/* 2. Advice Text - Improved Typography */}
+             <div style={{ 
+                 position: 'absolute', 
+                 top: '180px', 
+                 bottom: '150px', 
+                 left: '65px', 
+                 right: '65px', 
+                 display: 'flex', 
+                 alignItems: 'center', 
+                 justifyContent: 'center' 
+             }}>
+                <p 
+                  style={{ 
+                    fontSize: '40px', 
+                    lineHeight: '1.45', 
+                    color: '#1C1917', 
+                    fontWeight: 400,
+                    textAlign: 'center',
+                    margin: 0,
+                    letterSpacing: '-0.02em',
+                    fontStyle: 'normal'
+                  }}
+                >
+                  {displayAdvice}
+                </p>
+             </div>
+
+             {/* 3. Watermark - Balanced position, moved lower from 115px to 102px */}
+             <div style={{ position: 'absolute', bottom: '102px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+                <p 
+                  style={{ 
+                    fontSize: '22px', 
+                    color: '#78716C', 
+                    fontWeight: 400,
+                    letterSpacing: '0.05em', 
+                    opacity: 0.8
+                  }}
+                >
+                  cardvice.app
+                </p>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Interactive UI */}
       <div 
-        className={`relative flex justify-center ${getMainCardClasses()}`}
+        className={`relative flex justify-center mb-0 ${getMainCardClasses()}`}
         onAnimationEnd={handleAnimationEnd}
       >
         <div className="relative">
+            {/* The Hands Image for UI */}
             <img 
               src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
               alt="Hands holding an advice card"
@@ -85,28 +227,56 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
               draggable={false}
             />
             
+            {/* Advice Content Area - Interactive UI */}
             <div 
               onClick={onNext}
-              className="absolute inset-0 flex flex-col items-center justify-center px-10 pb-12 md:px-24 md:pb-48 text-center cursor-pointer group"
+              className="absolute inset-0 flex flex-col items-center justify-center px-10 pb-12 md:px-24 md:pb-48 text-center cursor-pointer"
             >
               {emojiUrl && (
                 <img 
                   src={emojiUrl} 
                   alt="" 
-                  className="w-10 h-10 md:w-14 md:h-14 mb-6 md:mb-10 object-contain select-none pointer-events-none opacity-90" 
+                  className="w-10 h-10 md:w-16 md:h-16 mb-6 md:mb-12 object-contain select-none pointer-events-none opacity-90" 
                   draggable={false} 
                 />
               )}
               
-              <p className="text-lg md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-[80%] md:max-w-xl">
+              <p className="text-xl md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-[85%] md:max-w-xl">
                 {displayAdvice}
               </p>
 
-              <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
+              {/* Spacebar Hint */}
+              <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none hover:text-stone-500 transition-colors">
                 press spacebar to shuffle
               </p>
             </div>
         </div>
+      </div>
+
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col gap-3">
+        <button
+          onClick={handleCapture}
+          disabled={isCapturing}
+          className={`
+            p-3.5 rounded-full bg-[#1E1E1E] border border-[#1E1E1E]
+            shadow-xl text-white hover:bg-black transition-all active:scale-95
+            ${isCapturing ? 'opacity-50 cursor-wait' : 'cursor-pointer'}
+          `}
+          aria-label="Download Square Shot"
+        >
+          {isCapturing ? (
+            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          )}
+        </button>
       </div>
     </div>
   );

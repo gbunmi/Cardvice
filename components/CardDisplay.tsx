@@ -1,48 +1,45 @@
+import { Category } from '../types';
+import { CATEGORY_EMOJI_CODES } from '../constants';
 import React, { useEffect, useState, useRef } from 'react';
 
 interface CardDisplayProps {
   advice: string;
+  category: Category;
   onNext: () => void;
   trigger: number;
 }
 
 type AnimationState = 'idle' | 'leaving' | 'entering';
 
-const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) => {
+const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, trigger }) => {
   const [animationState, setAnimationState] = useState<AnimationState>('idle');
   const [displayAdvice, setDisplayAdvice] = useState(advice);
+  const [displayCategory, setDisplayCategory] = useState(category);
   const isFirstRender = useRef(true);
   const prevTrigger = useRef(trigger);
 
   useEffect(() => {
-    // Skip animation on initial mount
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
     
-    // Check if trigger has changed (indicating a user request for new card)
     if (trigger !== prevTrigger.current) {
       prevTrigger.current = trigger;
-      // Start animation regardless of whether advice text changed
       setAnimationState('leaving');
     }
-  }, [trigger, advice]); // We depend on trigger primarily for the action
+  }, [trigger]);
 
   const handleAnimationEnd = () => {
     if (animationState === 'leaving') {
-      // Phase 1 Complete: Card has flown out.
-      // Now update text invisibly and start entry.
       setDisplayAdvice(advice);
+      setDisplayCategory(category);
       setAnimationState('entering');
     } else if (animationState === 'entering') {
-      // Phase 2 Complete: Card has popped in.
-      // Reset to idle.
       setAnimationState('idle');
     }
   };
 
-  // Main card animation classes
   const getMainCardClasses = () => {
     switch (animationState) {
       case 'leaving':
@@ -53,6 +50,8 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
         return '';
     }
   };
+
+  const emojiUrl = displayCategory ? `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[displayCategory]}.png` : '';
 
   return (
     <div className="flex flex-col items-center justify-end w-full max-w-4xl mx-auto relative">
@@ -74,13 +73,11 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
         }
       `}</style>
 
-      {/* The Image Card Container - Uses flex to center content and constraints */}
       <div 
         className={`relative flex justify-center ${getMainCardClasses()}`}
         onAnimationEnd={handleAnimationEnd}
       >
         <div className="relative">
-            {/* The Image Asset - Constrained by height to fit viewport */}
             <img 
               src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
               alt="Hands holding an advice card"
@@ -88,17 +85,23 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, onNext, trigger }) =>
               draggable={false}
             />
             
-            {/* Content Overlay */}
             <div 
               onClick={onNext}
               className="absolute inset-0 flex flex-col items-center justify-center px-10 pb-12 md:px-24 md:pb-48 text-center cursor-pointer group"
             >
+              {emojiUrl && (
+                <img 
+                  src={emojiUrl} 
+                  alt="" 
+                  className="w-10 h-10 md:w-14 md:h-14 mb-6 md:mb-10 object-contain select-none pointer-events-none opacity-90" 
+                  draggable={false} 
+                />
+              )}
               
               <p className="text-lg md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-[80%] md:max-w-xl">
                 {displayAdvice}
               </p>
 
-              {/* Instruction text positioned at the bottom of the paper area */}
               <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none group-hover:text-stone-500 transition-colors">
                 press spacebar to shuffle
               </p>

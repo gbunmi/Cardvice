@@ -1,23 +1,11 @@
 import React from 'react';
 import { Category } from '../types';
+import { CATEGORY_EMOJI_CODES } from '../constants';
 
 interface SidebarProps {
   selectedCategory: Category | null;
   toggleCategory: (category: Category) => void;
 }
-
-const CATEGORY_EMOJI_CODES: Record<Category, string> = {
-  [Category.Finance]: "1f4b8",
-  [Category.Love]: "1f498",
-  [Category.Health]: "1f9d8",
-  [Category.Social]: "1f942",
-  [Category.Work]: "1f4bc",
-  [Category.SelfCare]: "1f6c1",
-  [Category.Family]: "1f3e1",
-  [Category.DailyHabits]: "1f5d3-fe0f",
-  [Category.Friends]: "1f46f",
-  [Category.DigitalLife]: "1f4f1",
-};
 
 const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) => {
   const categories = Object.values(Category);

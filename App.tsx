@@ -1,67 +1,74 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import CardDisplay from './components/CardDisplay';
 import { Category } from './types';
-import { ADVICE_DATABASE, ALL_ADVICE } from './constants';
+import { ADVICE_DATABASE } from './constants';
+
+interface AdviceItem {
+  text: string;
+  category: Category;
+}
 
 const App: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [currentAdvice, setCurrentAdvice] = useState<string>("");
+  const [currentAdvice, setCurrentAdvice] = useState<AdviceItem>({ text: "", category: Category.SelfCare });
   const [trigger, setTrigger] = useState(0);
 
-  // Logic to get a random advice based on the single filter
-  const getRandomAdvice = useCallback(() => {
-    let pool: string[] = [];
+  // Flatten all advice into a lookup array for "All" shuffling
+  const allAdviceItems = useMemo(() => {
+    return Object.entries(ADVICE_DATABASE).flatMap(([cat, items]) => 
+      items.map(item => ({ text: item, category: cat as Category }))
+    );
+  }, []);
+
+  const getRandomAdvice = useCallback((): AdviceItem => {
+    let pool: AdviceItem[] = [];
 
     if (!selectedCategory) {
-      pool = ALL_ADVICE;
+      pool = allAdviceItems;
     } else {
-      pool = ADVICE_DATABASE[selectedCategory] || [];
+      const texts = ADVICE_DATABASE[selectedCategory] || [];
+      pool = texts.map(t => ({ text: t, category: selectedCategory }));
     }
 
-    if (pool.length === 0) return "No advice available for this category.";
+    if (pool.length === 0) return { text: "No advice available.", category: Category.SelfCare };
     
-    // If there's only one option, we can't switch.
     if (pool.length === 1) return pool[0];
 
     // Try to find a different advice from current
-    let newAdvice = currentAdvice;
+    let picked = pool[Math.floor(Math.random() * pool.length)];
     let attempts = 0;
-    while (newAdvice === currentAdvice && attempts < 10) {
-      newAdvice = pool[Math.floor(Math.random() * pool.length)];
+    while (picked.text === currentAdvice.text && attempts < 10) {
+      picked = pool[Math.floor(Math.random() * pool.length)];
       attempts++;
     }
     
-    return newAdvice;
-  }, [selectedCategory, currentAdvice]);
+    return picked;
+  }, [selectedCategory, currentAdvice.text, allAdviceItems]);
 
-  // Handle generating next advice
   const handleNext = useCallback(() => {
-    const nextAdvice = getRandomAdvice();
-    setCurrentAdvice(nextAdvice);
-    setTrigger(t => t + 1); // Always increment trigger to force animation
+    const next = getRandomAdvice();
+    setCurrentAdvice(next);
+    setTrigger(t => t + 1);
   }, [getRandomAdvice]);
 
-  // Initial load
   useEffect(() => {
     setCurrentAdvice(getRandomAdvice());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  // When category changes, update the advice immediately
   useEffect(() => {
-    const nextAdvice = getRandomAdvice();
-    if (nextAdvice !== currentAdvice) {
-        setCurrentAdvice(nextAdvice);
+    const next = getRandomAdvice();
+    if (next.text !== currentAdvice.text) {
+        setCurrentAdvice(next);
         setTrigger(t => t + 1);
     }
   }, [selectedCategory]); 
 
-  // Handle Spacebar
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'Space') {
-        event.preventDefault(); // Prevent scrolling
+        event.preventDefault();
         handleNext();
       }
     };
@@ -88,7 +95,8 @@ const App: React.FC = () => {
         }}
       >
         <CardDisplay 
-          advice={currentAdvice} 
+          advice={currentAdvice.text} 
+          category={currentAdvice.category}
           trigger={trigger}
           onNext={handleNext} 
         />

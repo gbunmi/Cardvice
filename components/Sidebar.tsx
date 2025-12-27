@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) =
         <h1 className="text-3xl font-bold text-stone-900 font-serif tracking-tight">Cardvice.</h1>
       </div>
 
-      <div className="grid grid-rows-2 grid-flow-col gap-3 md:gap-2 overflow-x-auto pb-4 md:pb-0 md:grid-cols-2 md:grid-rows-none md:grid-flow-row md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
+      <div className="grid grid-rows-2 grid-flow-col gap-2 md:gap-1.5 overflow-x-auto pb-4 md:pb-0 md:grid-cols-2 md:grid-rows-none md:grid-flow-row md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
         {categories.map((category) => {
           const isSelected = selectedCategory === category;
           const emojiUrl = `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[category]}.png`;

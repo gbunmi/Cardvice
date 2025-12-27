@@ -259,19 +259,19 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
           onClick={handleCapture}
           disabled={isCapturing}
           className={`
-            p-3.5 rounded-full bg-[#1E1E1E] border border-[#1E1E1E]
+            p-2.5 md:p-3.5 rounded-full bg-[#1E1E1E] border border-[#1E1E1E]
             shadow-xl text-white hover:bg-black transition-all active:scale-95
             ${isCapturing ? 'opacity-50 cursor-wait' : 'cursor-pointer'}
           `}
           aria-label="Download Square Shot"
         >
           {isCapturing ? (
-            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+            <svg className="animate-spin h-4 w-4 md:h-5 md:w-5" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-[22px] md:h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
               <circle cx="12" cy="13" r="3"/>
             </svg>

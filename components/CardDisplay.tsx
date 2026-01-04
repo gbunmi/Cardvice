@@ -53,8 +53,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
     }
   };
 
-  const handleCapture = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCapture = async () => {
     if (isCapturing || !captureRef.current) return;
     
     setIsCapturing(true);
@@ -286,7 +285,8 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
         </div>
       </div>
 
-      {/* Floating Action Buttons */}
+      {/* Floating Action Buttons - Temporarily Hidden */}
+      {/* 
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col gap-3">
         <button
           onClick={handleCapture}
@@ -312,6 +312,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
           )}
         </button>
       </div>
+      */}
     </div>
   );
 };

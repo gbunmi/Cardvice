@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import CardDisplay from './components/CardDisplay';
 import { Category } from './types';
@@ -14,55 +14,80 @@ const App: React.FC = () => {
   const [currentAdvice, setCurrentAdvice] = useState<AdviceItem>({ text: "", category: Category.SelfCare });
   const [trigger, setTrigger] = useState(0);
 
-  // Flatten all advice into a lookup array for "All" shuffling
+  // Shuffled pools for each category + "ALL"
+  const poolsRef = useRef<Record<string, AdviceItem[]>>({});
+
+  // Flatten all advice once
   const allAdviceItems = useMemo(() => {
     return Object.entries(ADVICE_DATABASE).flatMap(([cat, items]) => 
       items.map(item => ({ text: item, category: cat as Category }))
     );
   }, []);
 
-  const getRandomAdvice = useCallback((): AdviceItem => {
-    let pool: AdviceItem[] = [];
+  // Fisher-Yates shuffle
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
 
-    if (!selectedCategory) {
-      pool = allAdviceItems;
-    } else {
-      const texts = ADVICE_DATABASE[selectedCategory] || [];
-      pool = texts.map(t => ({ text: t, category: selectedCategory }));
+  const getNextFromPool = useCallback((): AdviceItem => {
+    const key = selectedCategory || 'ALL_CONTEXT';
+    
+    // Initialize or refill pool if empty
+    if (!poolsRef.current[key] || poolsRef.current[key].length === 0) {
+      let freshPool: AdviceItem[] = [];
+      if (!selectedCategory) {
+        freshPool = allAdviceItems;
+      } else {
+        const texts = ADVICE_DATABASE[selectedCategory] || [];
+        freshPool = texts.map(t => ({ text: t, category: selectedCategory }));
+      }
+
+      // If database is empty, return a fallback
+      if (freshPool.length === 0) {
+        return { text: "No advice available.", category: Category.SelfCare };
+      }
+
+      // Shuffle the fresh pool
+      let shuffled = shuffleArray(freshPool);
+
+      // Prevent immediate repetition when refilling if pool has > 1 item
+      if (shuffled.length > 1 && shuffled[shuffled.length - 1].text === currentAdvice.text) {
+        // Swap last item with second to last
+        [shuffled[shuffled.length - 1], shuffled[shuffled.length - 2]] = 
+        [shuffled[shuffled.length - 2], shuffled[shuffled.length - 1]];
+      }
+
+      poolsRef.current[key] = shuffled;
     }
 
-    if (pool.length === 0) return { text: "No advice available.", category: Category.SelfCare };
-    
-    if (pool.length === 1) return pool[0];
-
-    // Try to find a different advice from current
-    let picked = pool[Math.floor(Math.random() * pool.length)];
-    let attempts = 0;
-    while (picked.text === currentAdvice.text && attempts < 10) {
-      picked = pool[Math.floor(Math.random() * pool.length)];
-      attempts++;
-    }
-    
-    return picked;
-  }, [selectedCategory, currentAdvice.text, allAdviceItems]);
+    // Pop from the pool
+    const nextItem = poolsRef.current[key].pop()!;
+    return nextItem;
+  }, [selectedCategory, allAdviceItems, currentAdvice.text]);
 
   const handleNext = useCallback(() => {
-    const next = getRandomAdvice();
+    const next = getNextFromPool();
     setCurrentAdvice(next);
     setTrigger(t => t + 1);
-  }, [getRandomAdvice]);
+  }, [getNextFromPool]);
 
+  // Initial load
   useEffect(() => {
-    setCurrentAdvice(getRandomAdvice());
+    setCurrentAdvice(getNextFromPool());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
+  // When category changes
   useEffect(() => {
-    const next = getRandomAdvice();
-    if (next.text !== currentAdvice.text) {
-        setCurrentAdvice(next);
-        setTrigger(t => t + 1);
-    }
+    const next = getNextFromPool();
+    setCurrentAdvice(next);
+    setTrigger(t => t + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]); 
 
   useEffect(() => {

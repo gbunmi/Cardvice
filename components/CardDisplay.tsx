@@ -88,6 +88,8 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
 
   const emojiUrl = displayCategory ? `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/64/${CATEGORY_EMOJI_CODES[displayCategory]}.png` : '';
 
+  const libreStack = "'Libre Baskerville', serif";
+
   return (
     <div className="flex flex-col items-center justify-end w-full max-w-4xl mx-auto relative h-full">
       <style>{`
@@ -110,7 +112,6 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
 
       {/* 
         PRECISE 1080x1080 CAPTURE TEMPLATE
-        Matches the provided reference image layout pixel-for-pixel.
       */}
       <div id="capture-area">
         <div 
@@ -121,7 +122,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
             backgroundColor: '#FAFAF9', 
             position: 'relative', 
             overflow: 'hidden',
-            fontFamily: "'Libre Baskerville', serif",
+            fontFamily: libreStack,
             WebkitFontSmoothing: 'antialiased'
           }}
         >
@@ -140,7 +141,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
             }}
           />
           
-          {/* Layer 2: Hands + White Card Asset - REDUCED SIZE WITH PADDING */}
+          {/* Layer 2: Hands + White Card Asset */}
           <img 
             src="https://raw.githubusercontent.com/gbunmi/images/main/Group%203%20(1).png" 
             alt=""
@@ -148,18 +149,18 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
             style={{ 
                 position: 'absolute', 
                 bottom: 0, 
-                left: '40px', // Center with 40px padding on each side (1000px width)
+                left: '40px', 
                 width: '1000px', 
                 height: 'auto', 
                 zIndex: 10 
             }}
           />
 
-          {/* Layer 3: Content Overlay - Adjusted for 1000px Card width */}
+          {/* Layer 3: Content Overlay */}
           <div style={{ position: 'absolute', top: '265px', left: '190px', width: '700px', height: '600px', zIndex: 20 }}>
              
              {/* 1. Emoji */}
-             <div style={{ position: 'absolute', top: '140px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+             <div style={{ position: 'absolute', top: '105px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
                <img 
                  src={emojiUrl} 
                  alt="" 
@@ -168,10 +169,28 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
                />
              </div>
 
-             {/* 2. Advice Text - Improved Typography */}
+             {/* 2. Category Badge */}
+             <div style={{ position: 'absolute', top: '185px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+               <div style={{ 
+                   backgroundColor: '#F5F5F4', 
+                   color: '#78716C', 
+                   padding: '6px 14px', 
+                   borderRadius: '100px', 
+                   fontSize: '13px', 
+                   fontWeight: 700, 
+                   textTransform: 'uppercase', 
+                   letterSpacing: '0.12em',
+                   fontFamily: libreStack,
+                   opacity: 0.9
+               }}>
+                 {displayCategory}
+               </div>
+             </div>
+
+             {/* 3. Advice Text */}
              <div style={{ 
                  position: 'absolute', 
-                 top: '180px', 
+                 top: '235px', 
                  bottom: '150px', 
                  left: '65px', 
                  right: '65px', 
@@ -188,22 +207,24 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
                     textAlign: 'center',
                     margin: 0,
                     letterSpacing: '-0.02em',
-                    fontStyle: 'normal'
+                    fontStyle: 'normal',
+                    fontFamily: libreStack
                   }}
                 >
                   {displayAdvice}
                 </p>
              </div>
 
-             {/* 3. Watermark - Balanced position, moved lower from 115px to 102px */}
+             {/* 4. Watermark - Increased font size slightly as requested */}
              <div style={{ position: 'absolute', bottom: '102px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
                 <p 
                   style={{ 
-                    fontSize: '22px', 
+                    fontSize: '20px', 
                     color: '#78716C', 
                     fontWeight: 400,
                     letterSpacing: '0.05em', 
-                    opacity: 0.8
+                    opacity: 0.8,
+                    fontFamily: libreStack
                   }}
                 >
                   cardvice.app
@@ -232,21 +253,29 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
               onClick={onNext}
               className="absolute inset-0 flex flex-col items-center justify-center px-10 pb-12 md:px-24 md:pb-48 text-center cursor-pointer"
             >
+              {/* Emoji */}
               {emojiUrl && (
                 <img 
                   src={emojiUrl} 
                   alt="" 
-                  className="w-10 h-10 md:w-16 md:h-16 mb-6 md:mb-12 object-contain select-none pointer-events-none opacity-90" 
+                  className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-8 object-contain select-none pointer-events-none opacity-90" 
                   draggable={false} 
                 />
               )}
+
+              {/* Category Pill Badge */}
+              <div 
+                className="mb-4 md:mb-7 px-3 py-1 rounded-full bg-stone-100/80 text-stone-500 text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase border border-stone-200/50 font-serif"
+              >
+                {displayCategory}
+              </div>
               
               <p className="text-xl md:text-3xl lg:text-4xl text-stone-800 font-serif leading-relaxed select-none max-w-[85%] md:max-w-xl">
                 {displayAdvice}
               </p>
 
               {/* Spacebar Hint */}
-              <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-sans tracking-wide opacity-80 select-none hover:text-stone-500 transition-colors">
+              <p className="hidden md:block absolute bottom-[15%] md:bottom-44 text-stone-400 text-xs md:text-sm font-serif tracking-wide opacity-80 select-none hover:text-stone-500 transition-colors">
                 press spacebar to shuffle
               </p>
             </div>
@@ -259,7 +288,8 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
           onClick={handleCapture}
           disabled={isCapturing}
           className={`
-            p-2.5 md:p-3.5 rounded-full bg-[#1E1E1E] border border-[#1E1E1E]
+            p-2.5 md:p-3.5 rounded-xl bg-[#1E1E1E] border border-[#1E1E1E]
+            ring-1 ring-inset ring-stone-400/30
             shadow-xl text-white hover:bg-black transition-all active:scale-95
             ${isCapturing ? 'opacity-50 cursor-wait' : 'cursor-pointer'}
           `}

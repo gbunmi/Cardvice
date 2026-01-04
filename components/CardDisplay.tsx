@@ -169,19 +169,23 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
                />
              </div>
 
-             {/* 2. Category Badge */}
+             {/* 2. Category Badge - Improved visual style */}
              <div style={{ position: 'absolute', top: '185px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
                <div style={{ 
-                   backgroundColor: '#F5F5F4', 
+                   backgroundColor: 'rgba(245, 245, 244, 0.85)', 
                    color: '#78716C', 
-                   padding: '6px 14px', 
+                   padding: '10px 22px', 
                    borderRadius: '100px', 
-                   fontSize: '13px', 
+                   fontSize: '15px', 
                    fontWeight: 700, 
                    textTransform: 'uppercase', 
-                   letterSpacing: '0.12em',
+                   letterSpacing: '0.15em',
                    fontFamily: libreStack,
-                   opacity: 0.9
+                   border: '1px solid rgba(231, 229, 228, 0.6)',
+                   display: 'inline-flex',
+                   alignItems: 'center',
+                   justifyContent: 'center',
+                   lineHeight: 1
                }}>
                  {displayCategory}
                </div>
@@ -215,7 +219,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
                 </p>
              </div>
 
-             {/* 4. Watermark - Increased font size slightly as requested */}
+             {/* 4. Watermark */}
              <div style={{ position: 'absolute', bottom: '102px', left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
                 <p 
                   style={{ 

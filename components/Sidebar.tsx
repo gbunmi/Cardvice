@@ -42,13 +42,6 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedCategory, toggleCategory }) =
           );
         })}
       </div>
-      
-      <div className="mt-auto hidden md:block pt-10">
-        <p className="text-xs text-stone-400">
-          <br/>
-          &copy; {new Date().getFullYear()} Cardvice.
-        </p>
-      </div>
     </div>
   );
 };

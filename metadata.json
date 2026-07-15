@@ -1,5 +1,6 @@
 {
   "name": "Cardvice",
   "description": "Bite-sized advice for everyday life",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": []
 }

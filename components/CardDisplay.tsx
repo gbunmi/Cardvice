@@ -275,7 +275,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
               </div>
               
               <p 
-                className="text-stone-900 font-serif select-none max-w-[85%] md:max-w-xl text-[12px] sm:text-[15px] md:text-[20px] lg:text-[24px] xl:text-[28px] font-normal leading-[1.45] text-center"
+                className="text-stone-900 font-serif select-none max-w-[76%] md:max-w-xl text-[14.5px] sm:text-[17px] md:text-[20px] lg:text-[24px] xl:text-[28px] font-normal leading-[1.5] text-center"
               >
                 {displayAdvice}
               </p>

@@ -262,21 +262,20 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ advice, category, onNext, tri
                 <img 
                   src={emojiUrl} 
                   alt="" 
-                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 mb-2 sm:mb-3 md:mb-5 lg:mb-6 object-contain select-none pointer-events-none opacity-90" 
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 mb-3 sm:mb-4 md:mb-5 lg:mb-6 object-contain select-none pointer-events-none opacity-90" 
                   draggable={false} 
                 />
               )}
 
               {/* Category Pill Badge */}
               <div 
-                className="mb-3 sm:mb-4 md:mb-6 px-3 py-0.5 sm:py-1 rounded-full bg-stone-100/80 text-stone-500 text-[9px] sm:text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase border border-stone-200/50 font-serif"
+                className="mb-4 sm:mb-5 md:mb-6 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-stone-100/80 text-stone-500 text-[7.5px] sm:text-[9px] md:text-xs font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase border border-stone-200/50 font-serif"
               >
                 {displayCategory}
               </div>
               
               <p 
-                className="text-stone-900 font-serif select-none max-w-[85%] md:max-w-xl"
-                style={{ fontSize: 'clamp(15px, 3.3vh, 32px)', lineHeight: '1.45' }}
+                className="text-stone-900 font-serif select-none max-w-[85%] md:max-w-xl text-[12px] sm:text-[15px] md:text-[20px] lg:text-[24px] xl:text-[28px] font-normal leading-[1.45] text-center"
               >
                 {displayAdvice}
               </p>
